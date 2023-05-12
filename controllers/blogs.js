@@ -18,15 +18,6 @@ blogsRouter.get('/:id', async (request, response, next) => {
   } catch (exception) {
     next(exception);
   }
-  // Blog.findById(request.params.id)
-  //   .then((blog) => {
-  //     if (blog) {
-  //       response.json(blog);
-  //     } else {
-  //       response.status(404).end();
-  //     }
-  //   })
-  //   .catch((error) => next(error));
 });
 
 blogsRouter.post('/', async (request, response, next) => {
@@ -46,12 +37,13 @@ blogsRouter.post('/', async (request, response, next) => {
   }
 });
 
-blogsRouter.delete('/:id', (request, response, next) => {
-  Blog.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end();
-    })
-    .catch((error) => next(error));
+blogsRouter.delete('/:id', async (request, response, next) => {
+  try {
+    await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (exception) {
+    next(exeception);
+  }
 });
 
 blogsRouter.put('/:id', (request, response, next) => {

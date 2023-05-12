@@ -67,31 +67,19 @@ test('blog without title is not add', async () => {
 });
 
 // Teste que busca e apaga um blog individual
-test('a specific note can be viewed', async () => {
+test('a specific blog can be viewed', async () => {
   const blogsAtStart = await helper.blogsInDb();
 
   const blogToView = blogsAtStart[0];
+  // console.log(blogToView._id);
 
   const resultBlog = await api
-    .get(`/api/notes/${blogToView.id}`)
+    .get(`/api/blogs/${blogToView.id}`)
     .expect(200)
     .expect('Content-Type', /application\/json/);
 
   expect(resultBlog.body).toEqual(blogToView);
 });
-
-// test('a specific blog can be viewed', async () => {
-//   const blogsAtStart = await helper.blogsInDb();
-
-//   const blogToView = blogsAtStart[0];
-
-//   const resultBlog = await api
-//     .get(`/api/blogs/${blogToView.id}`)
-//     .expect(200)
-//     .expect('Content-Type', /application\/json/);
-
-//   expect(resultBlog.body).toEqual(blogToView);
-// });
 
 test('a blog can be deleted', async () => {
   const blogsAtStart = await helper.blogsInDb();
