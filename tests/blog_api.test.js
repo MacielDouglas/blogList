@@ -8,26 +8,12 @@ const api = supertest(app);
 
 const Blog = require('../models/blog');
 
-// const initialBlogs = [
-//   {
-//     title: 'Living in the mud',
-//     author: 'Fiona Sherek',
-//     url: 'http://www.fullstack.com',
-//     likes: 12,
-//   },
-//   {
-//     title: 'Html is Full',
-//     author: 'Amaro Brando',
-//     url: 'http://www.internet.com',
-//     likes: 2,
-//   },
-// ];
-
 beforeEach(async () => {
   await Blog.deleteMany({});
-  // await Blog.insertMany(helper.i)
+
   let blogObject = new Blog(helper.initialBlogs[0]);
   await blogObject.save();
+
   blogObject = new Blog(helper.initialBlogs[1]);
   await blogObject.save();
 });
@@ -70,8 +56,6 @@ test('a valid blog can be added', async () => {
 // Teste que verifica se um blog esta sem conteúdo e não o salva
 test('blog without title is not add', async () => {
   const newBlog = {
-    author: 'The albino cat',
-    url: 'http://www.cat_albin.com',
     likes: 11,
   };
 
@@ -80,6 +64,48 @@ test('blog without title is not add', async () => {
   const blogsAtEnd = await helper.blogsInDb();
 
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+});
+
+// Teste que busca e apaga um blog individual
+test('a specific note can be viewed', async () => {
+  const blogsAtStart = await helper.blogsInDb();
+
+  const blogToView = blogsAtStart[0];
+
+  const resultBlog = await api
+    .get(`/api/notes/${blogToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
+
+  expect(resultBlog.body).toEqual(blogToView);
+});
+
+// test('a specific blog can be viewed', async () => {
+//   const blogsAtStart = await helper.blogsInDb();
+
+//   const blogToView = blogsAtStart[0];
+
+//   const resultBlog = await api
+//     .get(`/api/blogs/${blogToView.id}`)
+//     .expect(200)
+//     .expect('Content-Type', /application\/json/);
+
+//   expect(resultBlog.body).toEqual(blogToView);
+// });
+
+test('a blog can be deleted', async () => {
+  const blogsAtStart = await helper.blogsInDb();
+  const blogToDelete = blogsAtStart[0];
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const blogsAtEnd = await helper.blogsInDb();
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
+
+  const titles = blogsAtEnd.map((t) => t.title);
+
+  expect(titles).not.toContain(blogToDelete.title);
 });
 // Testes acima deletar ^^^^^^
 
