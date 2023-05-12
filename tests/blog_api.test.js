@@ -7,15 +7,15 @@ const app = require('../app');
 const api = supertest(app);
 
 const Blog = require('../models/blog');
+const blog = require('../models/blog');
 
 beforeEach(async () => {
   await Blog.deleteMany({});
 
-  let blogObject = new Blog(helper.initialBlogs[0]);
-  await blogObject.save();
-
-  blogObject = new Blog(helper.initialBlogs[1]);
-  await blogObject.save();
+  for (let blog of helper.initialBlogs) {
+    let blogObject = new Blog(blog);
+    await blogObject.save();
+  }
 });
 
 //teste a deletar depois, apenas seguindo os passos vvvvv
