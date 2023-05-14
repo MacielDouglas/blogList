@@ -7,7 +7,7 @@ const app = require('../app');
 const api = supertest(app);
 
 const Blog = require('../models/blog');
-const blog = require('../models/blog');
+// const blog = require('../models/blog');
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -71,7 +71,6 @@ test('a specific blog can be viewed', async () => {
   const blogsAtStart = await helper.blogsInDb();
 
   const blogToView = blogsAtStart[0];
-  // console.log(blogToView._id);
 
   const resultBlog = await api
     .get(`/api/blogs/${blogToView.id}`)
