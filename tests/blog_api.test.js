@@ -18,126 +18,119 @@ beforeEach(async () => {
   }
 });
 
-//teste a deletar depois, apenas seguindo os passos vvvvv
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs');
-
-  expect(response.body).toHaveLength(helper.initialBlogs.length);
-});
-
-test('the first note is about HTTP methods', async () => {
-  const response = await api.get('/api/blogs');
-
-  const titles = response.body.map((t) => t.title);
-  expect(titles).toContain('Living in the mud');
-});
-
-// adiciona um blog novo e verifica se o numero de blogs aumenta
-test('a valid blog can be added', async () => {
-  const newBlog = {
-    title: 'A new experience among species.',
-    author: 'The albino cat',
-    url: 'http://www.cat_albin.com',
-    likes: 11,
-  };
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
-
-  const blogsAtEnd = await helper.blogsInDb();
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
-
-  const titles = blogsAtEnd.map((t) => t.title);
-  expect(titles).toContain('A new experience among species.');
-});
-
-// Teste que verifica se um blog esta sem conteúdo e não o salva
-test('blog without title is not add', async () => {
-  const newBlog = {
-    likes: 11,
-  };
-
-  await api.post('/api/blogs').send(newBlog).expect(400);
-
-  const blogsAtEnd = await helper.blogsInDb();
-
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
-});
-
-// Teste que busca e apaga um blog individual
-test('a specific blog can be viewed', async () => {
-  const blogsAtStart = await helper.blogsInDb();
-
-  const blogToView = blogsAtStart[0];
-
-  const resultBlog = await api
-    .get(`/api/blogs/${blogToView.id}`)
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
-
-  expect(resultBlog.body).toEqual(blogToView);
-});
-
-test('a blog can be deleted', async () => {
-  const blogsAtStart = await helper.blogsInDb();
-  const blogToDelete = blogsAtStart[0];
-
-  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
-
-  const blogsAtEnd = await helper.blogsInDb();
-
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
-
-  const titles = blogsAtEnd.map((t) => t.title);
-
-  expect(titles).not.toContain(blogToDelete.title);
-});
-// Testes acima deletar ^^^^^^
-
-describe('when there is initially some blogs saved', () => {
+describe('blog list tests', () => {
+  //teste a deletar depois, apenas seguindo os passos vvvvv
   // 4.8
-  test('blogs are returned as json', async () => {
-    await api
-      .get('/api/blogs')
-      .expect(200)
-      .expect('Content-Type', /application\/json/);
-  }, 100000);
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs');
+
+    expect(response.body).toHaveLength(helper.initialBlogs.length);
+  });
+
+  test('the first note is about HTTP methods', async () => {
+    const response = await api.get('/api/blogs');
+
+    const titles = response.body.map((t) => t.title);
+    expect(titles).toContain('Living in the mud');
+  });
 
   // 4.9
   test('checks that the property for the unique identifier of the blog posts has the name of id', async () => {
     const response = await api.get('/api/blogs');
-
-    const ids = response.body.map((blog) => blog._id);
-
-    for (const id of ids) {
-      expect(id).toBeDefined();
+    for (blog of response.body) {
+      expect(blog.id).toBeDefined();
     }
   });
 
   // 4.10
-  test('a new post is created by making an HTTP POST request', async () => {
-    const post = {
-      title: 'First class tests',
-      author: 'Robert C. Martin',
-      url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
-      likes: 10,
+  // adiciona um blog novo e verifica se o numero de blogs aumenta
+  test('a valid blog can be added', async () => {
+    const newBlog = {
+      title: 'A new experience among species.',
+      author: 'The albino cat',
+      url: 'http://www.cat_albin.com',
+      likes: 11,
     };
-
     await api
-      .post('api/blogs')
-      .send(post)
+      .post('/api/blogs')
+      .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 
-    const titles = blogsAtEnd.map((blog) => blog.title);
-    expect(titles).toContain('First class tests');
+    const titles = blogsAtEnd.map((t) => t.title);
+    expect(titles).toContain('A new experience among species.');
+  });
+
+  // 4.11
+  test('verifies that if the likes property is missing from the request', async () => {
+    const newPost = {
+      title: 'Locking the drawer with the key inside.',
+      author: 'Carlos de la Vega',
+      url: 'www.locking.com',
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newPost)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(helper.initialBlogs.length + 1);
+    const like = response.body.map((l) => l.likes);
+    expect(like).toContain(0);
+  });
+
+  // 4.12
+  // Teste que verifica se um blog esta sem conteúdo e não o salva
+  test('blog without title is not add', async () => {
+    const newBlog = {
+      author: 'Carlos de la Vega',
+      url: 'www.locking.com',
+      likes: 11,
+    };
+
+    await api.post('/api/blogs').send(newBlog).expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+  });
+
+  // Teste que busca e apaga um blog individual
+  test('a specific blog can be viewed', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToView = blogsAtStart[0];
+
+    const resultBlog = await api
+      .get(`/api/blogs/${blogToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(resultBlog.body).toEqual(blogToView);
+  });
+
+  test('a blog can be deleted', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[0];
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
+
+    const titles = blogsAtEnd.map((t) => t.title);
+
+    expect(titles).not.toContain(blogToDelete.title);
   });
 });
+// Testes acima deletar ^^^^^^
+
 // encerrar a conexao usada pelo Mongoose
 afterAll(async () => {
   await mongoose.connection.close();
