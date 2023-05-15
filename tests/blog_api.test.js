@@ -99,22 +99,11 @@ describe('blog list tests', () => {
 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
   });
+});
 
-  // Teste que busca e apaga um blog individual
-  test('a specific blog can be viewed', async () => {
-    const blogsAtStart = await helper.blogsInDb();
-
-    const blogToView = blogsAtStart[0];
-
-    const resultBlog = await api
-      .get(`/api/blogs/${blogToView.id}`)
-      .expect(200)
-      .expect('Content-Type', /application\/json/);
-
-    expect(resultBlog.body).toEqual(blogToView);
-  });
-
-  test('a blog can be deleted', async () => {
+describe('Delete and update a blog', () => {
+  // 4.13
+  test(' deleting a single blog post resource', async () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
@@ -128,6 +117,36 @@ describe('blog list tests', () => {
 
     expect(titles).not.toContain(blogToDelete.title);
   });
+
+  // 4.14
+  test('updating a blog', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const updateBlog = blogsAtStart[0];
+
+    await api
+      .put(`/api/blogs/${updateBlog.id}`)
+      .send({ likes: 21 })
+      .expect(200);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    const blogUpdated = blogsAtEnd[0];
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+    expect(blogUpdated.likes).toBe(21);
+  });
+});
+
+// Teste que busca e apaga um blog individual
+test('a specific blog can be viewed', async () => {
+  const blogsAtStart = await helper.blogsInDb();
+
+  const blogToView = blogsAtStart[0];
+
+  const resultBlog = await api
+    .get(`/api/blogs/${blogToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
+
+  expect(resultBlog.body).toEqual(blogToView);
 });
 // Testes acima deletar ^^^^^^
 
