@@ -1,0 +1,9 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1c2x2IiwiaWQiOiI2NDY3YmVkMzlhYzY5MzQ5YmEzMTA5YWYiLCJpYXQiOjE2ODQ2MDYzMzJ9.HwuM8ynqdWsqF72Jsb9XBrC9_dDAFYxyWG-ny5L-f34
+
+{
+    "title": "Muleke Chato",
+    "url": "www.kducharop.com",
+    "likes": 23
+}
