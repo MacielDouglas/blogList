@@ -16,6 +16,24 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body;
 
+  if (username === undefined) {
+    return response
+      .status(400)
+      .json({ error: 'username required, must be at least 3 characters long' });
+  } else if (username.length < 3) {
+    return response
+      .status(400)
+      .json({ error: 'username must be at least 3 characters long' });
+  } else if (name === undefined) {
+    return response.status(400).json({ error: 'name required' });
+  } else if (!password) {
+    return response.status(400).json({ error: 'password require' });
+  } else if (password.length < 3) {
+    return response
+      .status(400)
+      .json({ error: 'password must be at least 3 characters long' });
+  }
+
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
