@@ -1,9 +1,16 @@
 post http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1c2x2IiwiaWQiOiI2NDY3YmVkMzlhYzY5MzQ5YmEzMTA5YWYiLCJpYXQiOjE2ODQ2MDYzMzJ9.HwuM8ynqdWsqF72Jsb9XBrC9_dDAFYxyWG-ny5L-f34
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoaWNvIiwiaWQiOiI2NDZjYzUyNWE2NWEwMjc5MjM2OWYyNDkiLCJpYXQiOjE2ODQ4NzM3MjMsImV4cCI6MTY4NDg3NzMyM30.xhGdCB77FvaSUlTowmfQzzONjUmsZnlPi1gXAncObJ4
 
 {
-    "title": "Muleke Chato",
-    "url": "www.kducharop.com",
-    "likes": 23
+    "title": "Praia, montanha, ou neve? Espaço Cosmico?",
+    "url": "www.viajando.com",
+    "likes": 40
 }
+
+####
+delete http://localhost:3003/api/blogs/646d2214ec885d66dd333f4b
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoaWNvIiwiaWQiOiI2NDZjYzUyNWE2NWEwMjc5MjM2OWYyNDkiLCJpYXQiOjE2ODQ4Njk5NDUsImV4cCI6MTY4NDg3MzU0NX0.XIfGM-Us0ezChedeD-NfrcUwAjh8ZpescTt1SzU-3t
+
+
